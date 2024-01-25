@@ -28,8 +28,25 @@ public class BulletController : MonoBehaviour
     private Vector3 normalizedVector = Vector3.zero;
     private Vector3 velocity = Vector3.zero;
     private float frontRad = 0.0f;
+    private bool isMove = true;
 
     // ä÷êî
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if(collision.gameObject.tag == "Block" || collision.gameObject.tag == "Bullet")
+        {
+            isMove = false;
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if(collision.gameObject.tag == "Block")
+        {
+            isMove = true;
+        }
+    }
 
     void Start()
     {
@@ -55,6 +72,13 @@ public class BulletController : MonoBehaviour
         velocity = velocity - rigidBody.velocity;
         velocity = new Vector3(Mathf.Clamp(velocity.x,velocity.x,debugMoveSpeed), 0.0f, Mathf.Clamp(velocity.z, velocity.z, debugMoveSpeed));
 
-        rigidBody.AddForce(velocity / Time.fixedDeltaTime, ForceMode.Force);
+        if(isMove)
+        {
+            rigidBody.AddForce(velocity / Time.fixedDeltaTime, ForceMode.Force);
+        }
+        else
+        {
+            rigidBody.velocity = Vector3.forward * debugMoveSpeed;
+        }
     }
 }
