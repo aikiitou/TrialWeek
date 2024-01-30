@@ -14,7 +14,6 @@ public class BlockController : MonoBehaviour
     int hitCounter = 0;
     int linkCounter = 0;
     int mass = 1;
-    float speed = 3.0f;
     float speed = 5.0f;
     bool isGroup = false;
     int counter = 0;
@@ -39,7 +38,6 @@ public class BlockController : MonoBehaviour
         {
             rigidbody.isKinematic = false;
             if (transform.parent == null)
-            if(transform.parent == null)
             {
                 Move();
             }
@@ -48,38 +46,15 @@ public class BlockController : MonoBehaviour
         else
         {
             if (counter == 0)
-            if(counter == 0)
             {
-                //rigidbody.isKinematic = false;
-                Vector3 direction = new(0, 0, speed);
-                rigidbody.AddForce(direction);
+               //rigidbody.isKinematic = false;
+              Vector3 direction = new(0, 0, speed);
+              rigidbody.AddForce(direction);
             }
             counter++;
-            if (IsStop())
-            {
-                rigidbody.constraints = RigidbodyConstraints.FreezeRotation  //Rotation��S�ăI��
-                | RigidbodyConstraints.FreezePositionZ;  //Position��Y�̂݃I��
-            }
-            else
-            {
-                rigidbody.constraints = RigidbodyConstraints.FreezeRotation;  //Rotation��S�ăI��
-                Vector3 direction = new(0, 0, speed);
-                rigidbody.AddForce(direction);
-            }
-        if (IsStop())
-        {
-            rigidbody.constraints = RigidbodyConstraints.FreezeRotation  //Rotation��S�ăI��
-            | RigidbodyConstraints.FreezePositionZ;  //Position��Y�̂݃I��
-        }
-        else
-        {
-            rigidbody.constraints = RigidbodyConstraints.FreezeRotation;  //Rotation��S�ăI��
-            Vector3 direction = new(0, 0, speed);
-            rigidbody.AddForce(direction);
-        }
-
         }
     }
+
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -92,30 +67,15 @@ public class BlockController : MonoBehaviour
                 if (transform.parent != null)
                 {
                     Debug.Log("Enter");
-                    Debug.Log(hitCounter);
                     Debug.Log(mass);
+                    Debug.Log(hitCounter);
                     Debug.Log(IsStop());
                     GameObject parent = transform.parent.gameObject;
                     parent.GetComponent<BlockGroupController>().SetIsStop(IsStop());
                 }
             }
-            else if (collision.gameObject.tag == "Block")  //�Փˑ��肪BlockObject�ł���
-            {
-
-            else if(collision.gameObject.tag == "Block")  //�Փˑ��肪BlockObject�ł���
-            {
-                Debug.Log("�Փ�");
-                linkCounter++;
-                linkController = collision.gameObject.GetComponent<BlockController>();
-            else if(collision.gameObject.name == "Block")  //�Փˑ��肪BlockObject�ł���
-            {
-                Debug.Log("�Փ�");
-                linkCounter++;
-                linkController = collision.gameObject.GetComponent<BlockController>();
-            }
             else if (collision.gameObject.name == "Block")  //�Փˑ��肪BlockObject�ł���
             {
-                Debug.Log("�Փ�");
                 linkCounter++;
                 linkController = collision.gameObject.GetComponent<BlockController>();
                 Vector3 collisionPos = collision.transform.position;
@@ -128,18 +88,12 @@ public class BlockController : MonoBehaviour
                 }
                 else
                 {
-
-                }
-                else
-                {
-                    Debug.Log("g");
                     GameObject parent = blockManager.CreateBlockGroup();
                     parent.GetComponent<BlockGroupController>().JoinMember(linkCounter);
                     transform.parent = parent.transform;
                     collision.transform.parent = parent.transform;
 
                     int add_mas = linkController.Mass;
-
                 }
                 mass++;
                 isGroup = true;
@@ -147,20 +101,6 @@ public class BlockController : MonoBehaviour
             else if (collision.gameObject.tag == "DeadZone")
             {
                 Destroy(gameObject);
-                    int add_mas = linkCotroller.Mass;
-
-                }
-                mass++;
-                isGroup = true;
-            }
-            else if (collision.gameObject.tag == "DeadZone")
-            {
-                Destroy(gameObject);
-                int add_mas = linkController.Mass;
-
-                mass += add_mas;
-            }
-                isGroup = true;
             }
         }
     }
@@ -187,10 +127,6 @@ public class BlockController : MonoBehaviour
                 linkCounter--;
                 mass--;
                 Vector3 collisionPos = collision.transform.position;
-                if (collisionPos.y > transform.position.y || collisionPos.z < transform.position.z)
-                {
-                    int sub_mass = collision.gameObject.GetComponent<BlockController>().Mass;
-                }
                 if (collision.transform.parent != null)
                 {
                     GameObject parent = collision.transform.parent.gameObject;
@@ -213,7 +149,5 @@ public class BlockController : MonoBehaviour
     public bool IsStop()
     {
         return hitCounter >= mass;
-
-        
     }
 }
