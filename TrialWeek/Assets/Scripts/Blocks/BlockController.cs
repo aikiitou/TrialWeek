@@ -9,13 +9,15 @@ public class BlockController : MonoBehaviour
     const float NONE = 0.0f;
 
     BlockManagerController blockManager = null;
-    BlockController linkCotroller = null;
+    BlockController linkController = null;
     Rigidbody rigidbody = null;
     int hitCounter = 0;
     int linkCounter = 0;
     int mass = 1;
+    float speed = 3.0f;
     float speed = 5.0f;
     bool isGroup = false;
+    int counter = 0;
 
     public int Mass { get => mass; }
     public bool IsGroup { get => isGroup; }
@@ -32,14 +34,33 @@ public class BlockController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (IsStop())
+        //Debug.Log(IsStop());
+        if (!IsStop())
         {
-            rigidbody.constraints = RigidbodyConstraints.FreezeRotation  //Rotation‚ğ‘S‚ÄƒIƒ“
-            | RigidbodyConstraints.FreezePositionZ;  //Position‚ÌY‚Ì‚İƒIƒ“
+            rigidbody.isKinematic = false;
+            if(transform.parent == null)
+            {
+                Move();
+            }
+            counter = 0;
         }
         else
         {
-            rigidbody.constraints = RigidbodyConstraints.FreezeRotation;  //Rotation‚ğ‘S‚ÄƒIƒ“
+            if(counter == 0)
+            {
+                //rigidbody.isKinematic = false;
+                Vector3 direction = new(0, 0, speed);
+                rigidbody.AddForce(direction);
+            }
+            counter++;
+        if (IsStop())
+        {
+            rigidbody.constraints = RigidbodyConstraints.FreezeRotation  //Rotationï¿½ï¿½Sï¿½ÄƒIï¿½ï¿½
+            | RigidbodyConstraints.FreezePositionZ;  //Positionï¿½ï¿½Yï¿½Ì‚İƒIï¿½ï¿½
+        }
+        else
+        {
+            rigidbody.constraints = RigidbodyConstraints.FreezeRotation;  //Rotationï¿½ï¿½Sï¿½ÄƒIï¿½ï¿½
             Vector3 direction = new(0, 0, speed);
             rigidbody.AddForce(direction);
         }
@@ -53,17 +74,37 @@ public class BlockController : MonoBehaviour
             if(collision.gameObject.tag == "Bullet")
             {
                 hitCounter++;
+                rigidbody.isKinematic = true;
+                if (transform.parent != null)
+                {
+                    Debug.Log("Enter");
+                    Debug.Log(hitCounter);
+                    Debug.Log(mass);
+                    Debug.Log(IsStop());
+                    GameObject parent = transform.parent.gameObject;
+                    parent.GetComponent<BlockGroupController>().SetIsStop(IsStop());
+                }
             }
-            else if(collision.gameObject.name == "Block")  //Õ“Ë‘Šè‚ªBlockObject‚Å‚ ‚é
+            else if(collision.gameObject.tag == "Block")  //ï¿½Õ“Ë‘ï¿½ï¿½è‚ªBlockObjectï¿½Å‚ï¿½ï¿½ï¿½
             {
-                Debug.Log("Õ“Ë");
+                Debug.Log("ï¿½Õ“ï¿½");
+                linkCounter++;
+                linkController = collision.gameObject.GetComponent<BlockController>();
+            else if(collision.gameObject.name == "Block")  //ï¿½Õ“Ë‘ï¿½ï¿½è‚ªBlockObjectï¿½Å‚ï¿½ï¿½ï¿½
+            {
+                Debug.Log("ï¿½Õ“ï¿½");
                 linkCounter++;
                 linkCotroller = collision.gameObject.GetComponent<BlockController>();
                 Vector3 collisionPos = collision.transform.position;
 
-                if (linkCotroller.IsGroup)
+                if (linkController.IsGroup)
                 {
                     transform.parent = collision.transform.parent;
+                    GameObject parent = transform.parent.gameObject;
+                    parent.GetComponent<BlockGroupController>().SetIsStop(linkController.IsStop());
+                }
+                else
+                {
 
                 }
                 else
@@ -75,6 +116,15 @@ public class BlockController : MonoBehaviour
                     transform.parent = parent.transform;
                     collision.transform.parent = parent.transform;
 
+                    int add_mas = linkController.Mass;
+
+                }
+                mass++;
+                isGroup = true;
+            }
+            else if (collision.gameObject.tag == "DeadZone")
+            {
+                Destroy(gameObject);
                     int add_mas = linkCotroller.Mass;
 
                     mass += add_mas;
@@ -91,15 +141,24 @@ public class BlockController : MonoBehaviour
             if (collision.gameObject.tag == "Bullet")
             {
                 hitCounter--;
+                if (transform.parent != null)
+                {
+                    Debug.Log("Exit");
+                    Debug.Log(mass);
+                    Debug.Log(hitCounter);
+                    Debug.Log(IsStop());
+                    GameObject parent = transform.parent.gameObject;
+                    parent.GetComponent<BlockGroupController>().SetIsStop(IsStop());
+                }
             }
             else if (collision.gameObject.name == "Block")
             {
                 linkCounter--;
+                mass--;
                 Vector3 collisionPos = collision.transform.position;
                 if (collisionPos.y > transform.position.y || collisionPos.z < transform.position.z)
                 {
                     int sub_mass = collision.gameObject.GetComponent<BlockController>().Mass;
-                    mass -= sub_mass;
                 }
                 if (collision.transform.parent != null)
                 {
@@ -115,13 +174,14 @@ public class BlockController : MonoBehaviour
         }
     }
 
-    private void Move(Vector3 direction_)
+    private void Move()
     {
-        rigidbody.velocity += direction_ * Time.deltaTime;
+        transform.Translate(0, 0, speed * Time.deltaTime);
     }
 
     bool IsStop()
     {
         return hitCounter >= mass;
+        
     }
 }
