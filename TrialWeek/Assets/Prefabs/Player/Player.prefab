@@ -114,6 +114,7 @@ MonoBehaviour:
   debugFireInterval: 1
   debugReloadtime: 3
   debugMoveAngle: 30
+  debugLife: 1
   bulletPrefab: {fileID: 8201504805386956285, guid: f7f73179733c64e488500b4f48682d88, type: 3}
   firePoint: {fileID: 1736511297756302362}
 --- !u!1 &1736511298926446712
