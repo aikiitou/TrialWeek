@@ -17,9 +17,6 @@ public class UIController : MonoBehaviour
     // 弾listのインデックス
     private int currentIndex = MAX_INDEX;
 
-    // リセット可能かどうかを表すflag
-    private bool isResetAble = true;
-
     // 定数宣言
     const int MAX_INDEX = 7;    // 要素のインデックス最大値　要素数は8だから
     const int EMPTY = -1;       // 空の時
@@ -39,31 +36,19 @@ public class UIController : MonoBehaviour
 
     void Update()
     {
-        // フラグ判定
-        setResetFlag();
-
         // UIを生成する
-        // 一度でuiPos.Lengthまで
-        if (playerController.CurrentBulletNum > currentBullet && isResetAble) 
+        // 保存した残弾数より現在の残弾数が違うとき
+        if (playerController.CurrentBulletNum > currentBullet)
         {
+            // 補充
             activeUI(bulletPrefab);
         }
-        // UIを削除する
-        if(playerController.CurrentBulletNum < currentBullet)
+        if (playerController.CurrentBulletNum < currentBullet)
         {
             // ref  参照渡しのような機能をもたらす
+            // 減少
             decreaseUI(ref currentIndex);
         }
-    }
-
-    // フラグ判定メソッド
-    private void setResetFlag()
-    {
-        // listが空のときリセット可能
-        if (bulletList.Count == 0)
-            isResetAble = true;
-        else
-            isResetAble = false;
     }
 
     // UIを生成する
