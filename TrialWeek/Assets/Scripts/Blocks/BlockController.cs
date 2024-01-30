@@ -9,13 +9,14 @@ public class BlockController : MonoBehaviour
     const float NONE = 0.0f;
 
     BlockManagerController blockManager = null;
-    BlockController linkCotroller = null;
+    BlockController linkController = null;
     Rigidbody rigidbody = null;
     int hitCounter = 0;
     int linkCounter = 0;
     int mass = 1;
-    float speed = 10.0f;
+    float speed = 3.0f;
     bool isGroup = false;
+    int counter = 0;
 
     public int Mass { get => mass; }
     public bool IsGroup { get => isGroup; }
@@ -32,7 +33,27 @@ public class BlockController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //Debug.Log(IsStop());
+        if (!IsStop())
+        {
+            rigidbody.isKinematic = false;
+            if(transform.parent == null)
+            {
+                Move();
+            }
+            counter = 0;
+        }
+        else
+        {
+            if(counter == 0)
+            {
+                //rigidbody.isKinematic = false;
+                Vector3 direction = new(0, 0, speed);
+                rigidbody.AddForce(direction);
+            }
+            counter++;
+        }
+
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -42,37 +63,47 @@ public class BlockController : MonoBehaviour
             if(collision.gameObject.tag == "Bullet")
             {
                 hitCounter++;
+                rigidbody.isKinematic = true;
+                if (transform.parent != null)
+                {
+                    Debug.Log("Enter");
+                    Debug.Log(hitCounter);
+                    Debug.Log(mass);
+                    Debug.Log(IsStop());
+                    GameObject parent = transform.parent.gameObject;
+                    parent.GetComponent<BlockGroupController>().SetIsStop(IsStop());
+                }
             }
-            if(collision.gameObject.name == "Block")  //è’ìÀëäéËÇ™BlockObjectÇ≈Ç†ÇÈ
+            else if(collision.gameObject.tag == "Block")  //è’ìÀëäéËÇ™BlockObjectÇ≈Ç†ÇÈ
             {
                 Debug.Log("è’ìÀ");
                 linkCounter++;
-                isGroup = true;
-                linkCotroller = collision.gameObject.GetComponent<BlockController>();
+                linkController = collision.gameObject.GetComponent<BlockController>();
                 Vector3 collisionPos = collision.transform.position;
 
-                if (linkCotroller.IsGroup)
+                if (linkController.IsGroup)
                 {
                     transform.parent = collision.transform.parent;
-
-                    GameObject parent = collision.transform.parent.gameObject;
-
+                    GameObject parent = transform.parent.gameObject;
+                    parent.GetComponent<BlockGroupController>().SetIsStop(linkController.IsStop());
                 }
                 else
                 {
-                    if (collisionPos.y > transform.position.y || collisionPos.z < transform.position.z)
-                    {
-                        GameObject parent = blockManager.CreateBlockGroup();
-                        parent.GetComponent<BlockGroupController>().JoinMember(linkCounter);
+                    GameObject parent = blockManager.CreateBlockGroup();
+                    parent.GetComponent<BlockGroupController>().JoinMember(linkCounter);
 
-                        transform.parent = parent.transform;
-                        collision.transform.parent = parent.transform;
+                    transform.parent = parent.transform;
+                    collision.transform.parent = parent.transform;
 
-                        int add_mas = linkCotroller.Mass;
+                    int add_mas = linkController.Mass;
 
-                        mass += add_mas;
-                    }
                 }
+                mass++;
+                isGroup = true;
+            }
+            else if (collision.gameObject.tag == "DeadZone")
+            {
+                Destroy(gameObject);
             }
         }
     }
@@ -83,16 +114,25 @@ public class BlockController : MonoBehaviour
         {
             if (collision.gameObject.tag == "Bullet")
             {
-
+                hitCounter--;
+                if (transform.parent != null)
+                {
+                    Debug.Log("Exit");
+                    Debug.Log(mass);
+                    Debug.Log(hitCounter);
+                    Debug.Log(IsStop());
+                    GameObject parent = transform.parent.gameObject;
+                    parent.GetComponent<BlockGroupController>().SetIsStop(IsStop());
+                }
             }
             else if (collision.gameObject.name == "Block")
             {
                 linkCounter--;
+                mass--;
                 Vector3 collisionPos = collision.transform.position;
                 if (collisionPos.y > transform.position.y || collisionPos.z < transform.position.z)
                 {
                     int sub_mass = collision.gameObject.GetComponent<BlockController>().Mass;
-                    mass -= sub_mass;
                 }
                 if (collision.transform.parent != null)
                 {
@@ -108,13 +148,14 @@ public class BlockController : MonoBehaviour
         }
     }
 
-    private void Move(Vector3 direction_)
+    private void Move()
     {
-        rigidbody.velocity += direction_ * Time.deltaTime;
+        transform.Translate(0, 0, speed * Time.deltaTime);
     }
 
     bool IsStop()
     {
         return hitCounter >= mass;
+        
     }
 }

@@ -8,6 +8,7 @@ public class BlockGroupController : MonoBehaviour
 
     Vector3 direction = new(0, 0, 3.0f);
     int memberNum = 0;
+    bool isStop = false;
 
     // Start is called before the first frame update
     void Start()
@@ -18,12 +19,10 @@ public class BlockGroupController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (!isStop)
         {
-            Debug.Log("Group移動");
-            Move(direction);
+            Move();
         }
-
 
         //子オブジェクトがいなけれは削除する
         if(memberNum == NONE)
@@ -32,9 +31,14 @@ public class BlockGroupController : MonoBehaviour
         }
     }
 
-    private void Move(Vector3 direction_)
+    public void SetIsStop(bool is_stop)
     {
-        transform.Translate(direction_ * Time.deltaTime);
+        isStop = is_stop;
+    }
+
+    private void Move()
+    {
+        transform.Translate(direction * Time.deltaTime);
     }
 
     //子オブジェクトが増えた時に呼び出される
