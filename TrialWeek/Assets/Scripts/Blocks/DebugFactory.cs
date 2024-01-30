@@ -9,22 +9,20 @@ public class DebugFactory : MonoBehaviour
     [SerializeField]
     GameObject block = null;
 
-    float timer_01 = 0;
-    float timer_02 = 0;
+    float timer = 0;
     float sponeTime = 3.0f;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        timer = sponeTime;
     }
 
     // Update is called once per frame
     void Update()
     {
-        timer_01 += Time.deltaTime;
-        timer_02 += Time.deltaTime;
-        if(timer_01 > sponeTime) 
+        timer += Time.deltaTime;
+        if(timer > sponeTime) 
         {
             for(int i = 0;i < spornes.Length; i++)
             {
@@ -32,11 +30,7 @@ public class DebugFactory : MonoBehaviour
 
                 Instantiate(block,pos,Quaternion.identity);
             }
-            timer_01 = 0;
-        }
-        if(timer_02 > 15.0f)
-        {
-            Destroy(gameObject);
+            timer = 0;
         }
     }
 }
