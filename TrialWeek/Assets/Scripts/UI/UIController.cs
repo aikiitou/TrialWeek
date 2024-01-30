@@ -38,6 +38,8 @@ public class UIController : MonoBehaviour
     {
         // UIを生成する
         // 保存した残弾数より現在の残弾数が違うとき
+        currentBullet = playerController.CurrentBulletNum;
+
         if (playerController.CurrentBulletNum > currentBullet)
         {
             // 補充
@@ -65,8 +67,6 @@ public class UIController : MonoBehaviour
             // UIをInstantiate　且つ　listに挿入 => 減少時のindex取得のため
             bulletList.Add(Instantiate(obj_, uiPos[i], Quaternion.identity, this.transform));  // transformは親指定のため
         }
-
-        currentBullet = playerController.CurrentBulletNum;
     }
 
     // UIを削除
@@ -82,8 +82,6 @@ public class UIController : MonoBehaviour
             bulletList.RemoveAt(num_);
             num_--;
         }
-
-        currentBullet = playerController.CurrentBulletNum;
     }
 
 }
