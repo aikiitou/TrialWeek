@@ -15,6 +15,7 @@ public class BlockController : MonoBehaviour
     int linkCounter = 0;
     int mass = 1;
     float speed = 3.0f;
+    float speed = 5.0f;
     bool isGroup = false;
     int counter = 0;
 
@@ -38,6 +39,7 @@ public class BlockController : MonoBehaviour
         {
             rigidbody.isKinematic = false;
             if (transform.parent == null)
+            if(transform.parent == null)
             {
                 Move();
             }
@@ -46,6 +48,7 @@ public class BlockController : MonoBehaviour
         else
         {
             if (counter == 0)
+            if(counter == 0)
             {
                 //rigidbody.isKinematic = false;
                 Vector3 direction = new(0, 0, speed);
@@ -63,6 +66,17 @@ public class BlockController : MonoBehaviour
                 Vector3 direction = new(0, 0, speed);
                 rigidbody.AddForce(direction);
             }
+        if (IsStop())
+        {
+            rigidbody.constraints = RigidbodyConstraints.FreezeRotation  //Rotation��S�ăI��
+            | RigidbodyConstraints.FreezePositionZ;  //Position��Y�̂݃I��
+        }
+        else
+        {
+            rigidbody.constraints = RigidbodyConstraints.FreezeRotation;  //Rotation��S�ăI��
+            Vector3 direction = new(0, 0, speed);
+            rigidbody.AddForce(direction);
+        }
 
         }
     }
@@ -88,6 +102,14 @@ public class BlockController : MonoBehaviour
             else if (collision.gameObject.tag == "Block")  //�Փˑ��肪BlockObject�ł���
             {
 
+            else if(collision.gameObject.tag == "Block")  //�Փˑ��肪BlockObject�ł���
+            {
+                Debug.Log("�Փ�");
+                linkCounter++;
+                linkController = collision.gameObject.GetComponent<BlockController>();
+            else if(collision.gameObject.name == "Block")  //�Փˑ��肪BlockObject�ł���
+            {
+                Debug.Log("�Փ�");
                 linkCounter++;
                 linkController = collision.gameObject.GetComponent<BlockController>();
             }
@@ -106,6 +128,10 @@ public class BlockController : MonoBehaviour
                 }
                 else
                 {
+
+                }
+                else
+                {
                     Debug.Log("g");
                     GameObject parent = blockManager.CreateBlockGroup();
                     parent.GetComponent<BlockGroupController>().JoinMember(linkCounter);
@@ -113,6 +139,15 @@ public class BlockController : MonoBehaviour
                     collision.transform.parent = parent.transform;
 
                     int add_mas = linkController.Mass;
+
+                }
+                mass++;
+                isGroup = true;
+            }
+            else if (collision.gameObject.tag == "DeadZone")
+            {
+                Destroy(gameObject);
+                    int add_mas = linkCotroller.Mass;
 
                 }
                 mass++;
@@ -179,5 +214,6 @@ public class BlockController : MonoBehaviour
     {
         return hitCounter >= mass;
 
+        
     }
 }
