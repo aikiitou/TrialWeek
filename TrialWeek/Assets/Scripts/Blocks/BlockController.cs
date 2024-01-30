@@ -14,7 +14,7 @@ public class BlockController : MonoBehaviour
     int hitCounter = 0;
     int linkCounter = 0;
     int mass = 1;
-    float speed = -5.0f;
+    float speed = 5.0f;
     bool isGroup = false;
     int counter = 0;
 
@@ -27,7 +27,7 @@ public class BlockController : MonoBehaviour
         blockManager = manager.GetComponent<BlockManagerController>();
         rigidbody = GetComponent<Rigidbody>();
         Vector3 direction = new(0, 0, speed);
-        rigidbody.AddForce(direction);
+        rigidbody.AddForce(-direction);
     }
 
     // Update is called once per frame
@@ -49,7 +49,7 @@ public class BlockController : MonoBehaviour
             {
                //rigidbody.isKinematic = false;
               Vector3 direction = new(0, 0, speed);
-              rigidbody.AddForce(direction);
+              rigidbody.AddForce(-direction);
             }
             counter++;
         }
@@ -66,10 +66,6 @@ public class BlockController : MonoBehaviour
                 rigidbody.isKinematic = false;
                 if (transform.parent != null)
                 {
-                    Debug.Log("Enter");
-                    Debug.Log(mass);
-                    Debug.Log(hitCounter);
-                    Debug.Log(IsStop());
                     GameObject parent = transform.parent.gameObject;
                     parent.GetComponent<BlockGroupController>().SetIsStop(IsStop());
                 }
@@ -115,10 +111,6 @@ public class BlockController : MonoBehaviour
                 rigidbody.isKinematic = true;
                 if (transform.parent != null)
                 {
-                    Debug.Log("Exit");
-                    Debug.Log(mass);
-                    Debug.Log(hitCounter);
-                    Debug.Log(IsStop());
                     GameObject parent = transform.parent.gameObject;
                     parent.GetComponent<BlockGroupController>().SetIsStop(IsStop());
                 }
