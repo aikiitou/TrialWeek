@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -68,6 +69,9 @@ public class PlayerController : MonoBehaviour
 
     // ライフ用
     private int currentLife = 0;
+
+    // クリア判定用
+    private bool isClear = false;
 
 
     // 関数
@@ -196,13 +200,26 @@ public class PlayerController : MonoBehaviour
         currentBulletNum--;
     }
 
-    private IEnumerator bulletReload()
+    private IEnumerator bulletReload() // リロード
     {
         isReload = true;
         yield return new WaitForSeconds(debugReloadtime);
         currentBulletNum = MAX_BULLET_NUM;
         isReload = false;
         canReload = true;
+    }
+
+    private void sceneController() // シーン遷移
+    {
+        if(currentLife == 0)
+        {
+            SceneManager.LoadScene("GameOverScene");
+        }
+
+        if(isClear)
+        {
+            SceneManager.LoadScene("ClearScene");
+        }
     }
 
     public int CurrentBulletNum { get => currentBulletNum; }
@@ -213,6 +230,16 @@ public class PlayerController : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         isJump = false;
+
+        if (collision.gameObject.tag == "DeadZone")
+        {
+            currentLife--;
+        }
+
+        if(collision.gameObject.tag == "Finish")
+        {
+            isClear = true;
+        }
     }
 
     // Start is called before the first frame update
@@ -236,8 +263,10 @@ public class PlayerController : MonoBehaviour
             {
                 return;
             }
-            StartCoroutine(bulletReload());
+            StartCoroutine(bulletReload()); // リロード
         }
+
+        sceneController(); // シーン遷移
     }
     private void FixedUpdate()
     {
