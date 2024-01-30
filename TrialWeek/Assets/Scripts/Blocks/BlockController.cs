@@ -14,7 +14,7 @@ public class BlockController : MonoBehaviour
     int hitCounter = 0;
     int linkCounter = 0;
     int mass = 1;
-    float speed = 5.0f;
+    float speed = -5.0f;
     bool isGroup = false;
     int counter = 0;
 
