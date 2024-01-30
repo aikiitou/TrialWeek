@@ -14,6 +14,7 @@ public class BlockController : MonoBehaviour
     int hitCounter = 0;
     int linkCounter = 0;
     int mass = 1;
+    [SerializeField]
     float speed = -3.0f;
     bool isGroup = false;
     int counter = 0;
