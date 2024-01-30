@@ -80,6 +80,8 @@ public class UIController : MonoBehaviour
             // UIをInstantiate　且つ　listに挿入 => 減少時のindex取得のため
             bulletList.Add(Instantiate(obj_, uiPos[i], Quaternion.identity, this.transform));  // transformは親指定のため
         }
+
+        currentBullet = playerController.CurrentBulletNum;
     }
 
     // UIを削除
@@ -95,6 +97,8 @@ public class UIController : MonoBehaviour
             bulletList.RemoveAt(num_);
             num_--;
         }
+
+        currentBullet = playerController.CurrentBulletNum;
     }
 
 }
