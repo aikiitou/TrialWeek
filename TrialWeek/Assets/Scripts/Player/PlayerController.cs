@@ -233,6 +233,7 @@ public class PlayerController : MonoBehaviour
 
         if (collision.gameObject.tag == "DeadZone")
         {
+            Debug.Log("Dead");
             currentLife--;
         }
 
