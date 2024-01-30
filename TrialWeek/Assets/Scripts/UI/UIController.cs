@@ -48,7 +48,7 @@ public class UIController : MonoBehaviour
             // ï‚è[
             activeUI(bulletPrefab);
         }
-        if (playerController.CurrentBulletNum < currentBullet)
+        if (playerController.CurrentBulletNum <= currentBullet)
         {
             // ref  éQè∆ìnÇµÇÃÇÊÇ§Ç»ã@î\ÇÇ‡ÇΩÇÁÇ∑
             // å∏è≠
