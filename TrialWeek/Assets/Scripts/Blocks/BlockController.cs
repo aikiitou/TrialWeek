@@ -36,7 +36,7 @@ public class BlockController : MonoBehaviour
         //Debug.Log(IsStop());
         if (!IsStop())
         {
-            rigidbody.isKinematic = false;
+            rigidbody.isKinematic = true;
             if (transform.parent == null)
             {
                 Move();
@@ -63,7 +63,7 @@ public class BlockController : MonoBehaviour
             if (collision.gameObject.tag == "Bullet")
             {
                 hitCounter++;
-                rigidbody.isKinematic = true;
+                rigidbody.isKinematic = false;
                 if (transform.parent != null)
                 {
                     Debug.Log("Enter");
@@ -112,6 +112,7 @@ public class BlockController : MonoBehaviour
             if (collision.gameObject.tag == "Bullet")
             {
                 hitCounter--;
+                rigidbody.isKinematic = true;
                 if (transform.parent != null)
                 {
                     Debug.Log("Exit");
