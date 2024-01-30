@@ -24,6 +24,19 @@ public class UIController : MonoBehaviour
     const int MAX_INDEX = 7;    // 要素のインデックス最大値　要素数は8だから
     const int EMPTY = -1;       // 空の時
 
+    // 取得用変数
+    [SerializeField] private GameObject player = null;
+    private PlayerController playerController = null;
+
+    // playerの現在の残弾
+    private int currentBullet = 0;
+
+    void Start()
+    {
+        playerController = player.GetComponent<PlayerController>();
+        currentBullet = playerController.CurrentBulletNum;
+    }
+
     void Update()
     {
         // フラグ判定
@@ -31,12 +44,12 @@ public class UIController : MonoBehaviour
 
         // UIを生成する
         // 一度でuiPos.Lengthまで
-        if (Input.GetKey(KeyCode.Space) && isResetAble)
+        if (playerController.CurrentBulletNum > currentBullet && isResetAble) 
         {
             activeUI(bulletPrefab);
         }
         // UIを削除する
-        if(Input.GetKeyUp(KeyCode.Return))
+        if(playerController.CurrentBulletNum < currentBullet)
         {
             // ref  参照渡しのような機能をもたらす
             decreaseUI(ref currentIndex);
