@@ -227,6 +227,8 @@ public class PlayerController : MonoBehaviour
 
     public int CurrentLife {  get => currentLife; }
 
+    public bool IsReload { get => isReload; }
+
     private void OnCollisionEnter(Collision collision)
     {
         isJump = false;
