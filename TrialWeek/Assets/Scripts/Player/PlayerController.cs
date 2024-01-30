@@ -36,6 +36,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float debugMoveAngle = 30.0f;
 
+    [SerializeField]
+    private int debugLife = 5;
+
     // 物理演算用
     Rigidbody rigidBody = null;
 
@@ -59,9 +62,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private GameObject firePoint = null;
     private float fireIntervalTimer = 0.0f;
-    private int current_bullet_num = 0;
+    private int currentBulletNum = 0;
     private bool isReload = false;
     private bool canReload = true;
+
+    // ライフ用
+    private int currentLife = 0;
 
 
     // 関数
@@ -187,20 +193,22 @@ public class PlayerController : MonoBehaviour
     private void bulletFire() // 弾の発射(生成)
     {
         Instantiate(bulletPrefab, firePoint.transform.position, Quaternion.identity);
-        current_bullet_num--;
+        currentBulletNum--;
     }
 
     private IEnumerator bulletReload()
     {
         isReload = true;
         yield return new WaitForSeconds(debugReloadtime);
-        current_bullet_num = MAX_BULLET_NUM;
+        currentBulletNum = MAX_BULLET_NUM;
         isReload = false;
         canReload = true;
     }
 
-    public int Current_bullet_num { get => current_bullet_num; }
+    public int CurrentBulletNum { get => currentBulletNum; }
     public float FrontRad { get => frontRad;}
+
+    public int CurrentLife {  get => currentLife; }
 
     private void OnCollisionEnter(Collision collision)
     {
@@ -212,7 +220,8 @@ public class PlayerController : MonoBehaviour
     {
         rigidBody = GetComponent<Rigidbody>();
         fireIntervalTimer = debugFireInterval;
-        current_bullet_num = MAX_BULLET_NUM;
+        currentBulletNum = MAX_BULLET_NUM;
+        currentLife = debugLife;
     }
     private void Update()
     {
@@ -221,7 +230,7 @@ public class PlayerController : MonoBehaviour
         moveVectorSet(); // 移動用のベクトルの設定
 
 
-        if (current_bullet_num == 0 || !canReload)
+        if (currentBulletNum == 0 || !canReload)
         {
             if (isReload)
             {
