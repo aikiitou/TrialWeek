@@ -10,6 +10,7 @@ public class DebugFactory : MonoBehaviour
     GameObject block = null;
 
     float timer = 0;
+    [SerializeField]
     float sponeTime = 3.0f;
 
     // Start is called before the first frame update
