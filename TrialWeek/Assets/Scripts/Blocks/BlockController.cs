@@ -115,6 +115,8 @@ public class BlockController : MonoBehaviour
                     GameObject parent = transform.parent.gameObject;
                     parent.GetComponent<BlockGroupController>().SetIsStop(IsStop());
                 }
+                Vector3 direction = new(0, 0, speed);
+                rigidbody.AddForce(-direction);
             }
             else if (collision.gameObject.name == "Block")
             {
