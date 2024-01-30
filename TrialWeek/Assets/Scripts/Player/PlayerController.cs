@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     private float debugMoveAngle = 30.0f;
 
     [SerializeField]
-    private int debugLife = 5;
+    private int debugLife = 1;
 
     // ï®óùââéZóp
     Rigidbody rigidBody = null;
@@ -239,6 +239,7 @@ public class PlayerController : MonoBehaviour
 
         if(collision.gameObject.tag == "Finish")
         {
+            Debug.Log("Goal");
             isClear = true;
         }
     }
