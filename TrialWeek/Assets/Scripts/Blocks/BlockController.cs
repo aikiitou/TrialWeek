@@ -14,7 +14,7 @@ public class BlockController : MonoBehaviour
     int hitCounter = 0;
     int linkCounter = 0;
     int mass = 1;
-    float speed = 10.0f;
+    float speed = 5.0f;
     bool isGroup = false;
 
     public int Mass { get => mass; }
@@ -32,7 +32,18 @@ public class BlockController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (IsStop())
+        {
+            rigidbody.constraints = RigidbodyConstraints.FreezeRotation  //Rotationを全てオン
+            | RigidbodyConstraints.FreezePositionZ;  //PositionのYのみオン
+        }
+        else
+        {
+            rigidbody.constraints = RigidbodyConstraints.FreezeRotation;  //Rotationを全てオン
+            Vector3 direction = new(0, 0, speed);
+            rigidbody.AddForce(direction);
+        }
+
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -43,11 +54,10 @@ public class BlockController : MonoBehaviour
             {
                 hitCounter++;
             }
-            if(collision.gameObject.name == "Block")  //衝突相手がBlockObjectである
+            else if(collision.gameObject.name == "Block")  //衝突相手がBlockObjectである
             {
                 Debug.Log("衝突");
                 linkCounter++;
-                isGroup = true;
                 linkCotroller = collision.gameObject.GetComponent<BlockController>();
                 Vector3 collisionPos = collision.transform.position;
 
@@ -55,24 +65,21 @@ public class BlockController : MonoBehaviour
                 {
                     transform.parent = collision.transform.parent;
 
-                    GameObject parent = collision.transform.parent.gameObject;
-
                 }
                 else
                 {
-                    if (collisionPos.y > transform.position.y || collisionPos.z < transform.position.z)
-                    {
-                        GameObject parent = blockManager.CreateBlockGroup();
-                        parent.GetComponent<BlockGroupController>().JoinMember(linkCounter);
+                    Debug.Log("g");
+                    GameObject parent = blockManager.CreateBlockGroup();
+                    parent.GetComponent<BlockGroupController>().JoinMember(linkCounter);
 
-                        transform.parent = parent.transform;
-                        collision.transform.parent = parent.transform;
+                    transform.parent = parent.transform;
+                    collision.transform.parent = parent.transform;
 
-                        int add_mas = linkCotroller.Mass;
+                    int add_mas = linkCotroller.Mass;
 
-                        mass += add_mas;
-                    }
+                    mass += add_mas;
                 }
+                isGroup = true;
             }
         }
     }
@@ -83,7 +90,7 @@ public class BlockController : MonoBehaviour
         {
             if (collision.gameObject.tag == "Bullet")
             {
-
+                hitCounter--;
             }
             else if (collision.gameObject.name == "Block")
             {
